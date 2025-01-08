@@ -1,6 +1,6 @@
 ways to run the project  
 1. backend is deployed on aws , frontend -vercel link-https://library-manager-beta.vercel.app/
-
+note-mongodb is containerized in the ec2 instance so currently the mongodb does not hold any data , thats why currently enabling free access to login/signup
 
 run locally   
 setup instructions   
