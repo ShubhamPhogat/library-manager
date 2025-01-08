@@ -8,7 +8,7 @@ const Signup = () => {
     firstName: "",
     lastName: "",
     email: "",
-    username: "",
+    userName: "",
     phone: "",
     role: "",
     password: "",
@@ -30,7 +30,7 @@ const Signup = () => {
     if (!formData.firstName) tempErrors.firstName = "First name is required";
     if (!formData.lastName) tempErrors.lastName = "Last name is required";
     if (!formData.email) tempErrors.email = "Email is required";
-    if (!formData.username) tempErrors.username = "Username is required";
+    if (!formData.userName) tempErrors.userName = "userName is required";
     if (!formData.phone) tempErrors.phone = "Phone number is required";
     if (!formData.role) tempErrors.role = "Role is required";
     if (!formData.password) tempErrors.password = "Password is required";
@@ -41,13 +41,13 @@ const Signup = () => {
     return Object.keys(tempErrors).length === 0;
   };
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       if (validateForm()) {
         console.log("Form Data:", formData);
-        const res = axios.post(
+        const res = await axios.post(
           `${process.env.REACT_APP_BASE_BACKEND_URL}/api/register`,
           formData
         );
@@ -57,7 +57,6 @@ const Signup = () => {
     } catch (error) {
       console.log(error);
     }
-    // Add your API call here
   };
 
   return (
@@ -143,20 +142,20 @@ const Signup = () => {
 
             <div>
               <label className="block text-sm font-medium text-purple-600 mb-2">
-                Username
+                userName
               </label>
               <input
                 type="text"
-                name="username"
-                value={formData.username}
+                name="userName"
+                value={formData.userName}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 rounded-lg border ${
-                  errors.username ? "border-red-500" : "border-gray-200"
+                  errors.userName ? "border-red-500" : "border-gray-200"
                 } focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                placeholder="Choose Username"
+                placeholder="Choose userName"
               />
-              {errors.username && (
-                <p className="text-red-500 text-xs mt-1">{errors.username}</p>
+              {errors.userName && (
+                <p className="text-red-500 text-xs mt-1">{errors.userName}</p>
               )}
             </div>
 
