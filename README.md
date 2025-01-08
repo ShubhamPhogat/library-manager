@@ -27,7 +27,13 @@ BUCKET_ACCESS_KEY=AKIA3M7ACRND2HRK5ORY
 BUCKET_SECRET_ACCESS_KEY=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
 
 .env for frontend  
-REACT_APP_BASE_BACKEND_URL = http://localhost:8000
+REACT_APP_BASE_BACKEND_URL = http://localhost:8000  
+run this docker command 
+To run MongoDB in Docker, use the following commands:
+docker run -d --name mongodb-container -p 27017:27017  mongo  
+docker exec -it <mongodbcontainer id> 
+copy the mongo url and use it as connection string  
+
 
 dark mode  
 ![Screenshot 2025-01-08 052456](https://github.com/user-attachments/assets/9ac763d1-15b2-467d-a0ff-753859b4fa05)  
