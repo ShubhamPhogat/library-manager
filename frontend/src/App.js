@@ -3,7 +3,12 @@ import "./App.css";
 import Signup from "./auth/Signup";
 import Log from "./auth/Log";
 
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  HashRouter,
+  Route,
+  Routes,
+} from "react-router-dom";
 import Dashboard from "./components/dashboard/Dashboard";
 import Main from "./pages/Main";
 import BookUploadForm from "./components/books/BookUploadForm";
@@ -15,7 +20,7 @@ import UserList from "./components/user/UserList";
 function App() {
   const [login, setLogin] = useState(true);
   return (
-    <Router>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<Log />} />
@@ -27,7 +32,7 @@ function App() {
         <Route path="/book/edit" element={<EditBook />} />
         <Route path="/user/list" element={<UserList />} />
       </Routes>
-    </Router>
+    </HashRouter>
   );
 }
 
