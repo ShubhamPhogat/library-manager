@@ -5,7 +5,7 @@ export const registerUser = async (req, res) => {
   let { firstName, lastName, email, userName, phone, password, role } =
     req.body;
 
-  // console.log(lastName, firstName, email, phone, userName, password);
+  console.log(lastName, firstName, email, phone, userName, password);
   if (!role) {
     role = "user";
   }
