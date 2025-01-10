@@ -101,36 +101,6 @@ export const deleteBook = async (req, res) => {
   }
 };
 
-export const editBook = async (req, res) => {
-  const { id } = req.params;
-  const bookData = req.body;
-
-  try {
-    if (!bookData) {
-      return res
-        .status(400)
-        .json({ error: "No data provided for updating the book." });
-    }
-
-    const updatedBook = await Book.findByIdAndUpdate(id, updatedData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updatedBook) {
-      return res.status(404).json({ error: `Book with ID "${id}" not found.` });
-    }
-
-    res.status(200).json({
-      message: `Book with ID "${id}" has been updated successfully.`,
-      updatedBook,
-    });
-  } catch (error) {
-    console.error("Error updating book:", error.message);
-    res.status(500).json({ error: "Failed to update book." });
-  }
-};
-
 export const issueBook = async (req, res) => {
   try {
     const { userId, bookId, timePeriod } = req.body;
@@ -240,5 +210,29 @@ export const settleOrder = async (req, res) => {
   } catch (error) {
     console.error("Error settling the order:", error.message);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const EditBook = async (req, res) => {
+  console.log("EditBook");
+  try {
+    const { title, author, genre, price, image, desc, id } = req.body;
+
+    const updatedBook = await Book.findByIdAndUpdate(
+      id,
+      { title, author, genre, price, image, desc },
+      { new: true } // Return the updated book
+    );
+
+    // If book not found
+    if (!updatedBook) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    // Return the updated book object as a response
+    res.status(200).json(updatedBook);
+  } catch (error) {
+    console.error("Error updating book:", error);
+    res.status(500).json({ message: "Error updating the book" });
   }
 };

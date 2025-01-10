@@ -1,50 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 const EditBook = () => {
   const location = useLocation();
+  const book = location.state; // Extracting book from location.state
   const navigate = useNavigate();
-  const { book } = location.state || {};
-
   const [bookData, setBookData] = useState({
-    title: "",
-    author: "",
-    genre: "",
-    price: "",
-    imageUrl: "",
-    description: "",
+    title: book.title,
+    publisher: book.publisher,
+    genre: book.genre,
+    price: book.price,
+    quantity: book.quantity,
+    desc: book.desc,
+    author: book.author,
+    id: book._id,
   });
+  const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    if (book) {
-      setBookData({
-        title: book.title || "",
-        author: book.author || "",
-        genre: book.genre || "",
-        price: book.price || "",
-        imageUrl: book.imageUrl || "",
-        description: book.description || "",
-      });
-    }
-  }, [book]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_BASE_BACKEND_URL}/book/delete`,
-        bookData
-      );
-
-      if (response) {
-        navigate("/book/list");
-      }
-    } catch (error) {
-      console.error("Error updating book:", error);
-    }
-  };
+  const genres = [
+    "Fiction",
+    "Non-Fiction",
+    "Science Fiction",
+    "Mystery",
+    "Romance",
+    "Biography",
+    "History",
+    "Self-Help",
+    "Children",
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,141 +37,198 @@ const EditBook = () => {
       ...prev,
       [name]: value,
     }));
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!bookData.title.trim()) newErrors.title = "Title is required";
+    if (!bookData.publisher.trim())
+      newErrors.publisher = "Publisher is required";
+    if (!bookData.genre) newErrors.genre = "Genre is required";
+    if (!bookData.price || bookData.price <= 0)
+      newErrors.price = "Valid price is required";
+    if (!bookData.quantity || bookData.quantity <= 0)
+      newErrors.quantity = "Valid quantity is required";
+    if (!bookData.desc.trim()) newErrors.desc = "Description is required";
+    if (!bookData.author.trim()) newErrors.author = "Author is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // console.log(book._id);
+    try {
+      if (validateForm()) {
+        const res = await axios.put(
+          `${process.env.REACT_APP_BASE_BACKEND_URL}/book/edit/${book._id}`,
+          bookData
+        );
+
+        if (res) {
+          toast.success("Book updated successfully");
+          navigate("/main");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating book", error);
+      toast.error("Error updating book");
+    }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-center mb-6">Edit Book</h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Book Title
-                </label>
-                <input
-                  id="title"
-                  name="title"
-                  value={bookData.title}
-                  onChange={handleChange}
-                  placeholder="Enter book title"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="author"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Author Name
-                </label>
-                <input
-                  id="author"
-                  name="author"
-                  value={bookData.author}
-                  onChange={handleChange}
-                  placeholder="Enter author name"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="genre"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Genre
-                </label>
-                <input
-                  id="genre"
-                  name="genre"
-                  value={bookData.genre}
-                  onChange={handleChange}
-                  placeholder="Enter genre"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="price"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Price
-                </label>
-                <input
-                  id="price"
-                  name="price"
-                  type="number"
-                  value={bookData.price}
-                  onChange={handleChange}
-                  placeholder="Enter price"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label
-                  htmlFor="imageUrl"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Image URL
-                </label>
-                <input
-                  id="imageUrl"
-                  name="imageUrl"
-                  value={bookData.imageUrl}
-                  onChange={handleChange}
-                  placeholder="Enter image URL"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={bookData.description}
-                  onChange={handleChange}
-                  placeholder="Enter book description"
-                  className="w-full h-32 px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 mt-6">
-              <button
-                type="button"
-                onClick={() => navigate("/books")}
-                className="px-4 py-2 border border-purple-500 text-purple-500 rounded-md hover:bg-purple-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
-              >
-                Update Book
-              </button>
-            </div>
-          </form>
+    <div className="min-h-screen bg-purple-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6 sm:p-8">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-purple-600">Edit Book</h2>
+          <p className="text-gray-500 mt-2">Update the book details below</p>
         </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-purple-600 mb-2">
+              Book Title*
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={bookData.title}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter book title"
+            />
+            {errors.title && (
+              <p className="mt-1 text-red-500 text-sm">{errors.title}</p>
+            )}
+          </div>
+
+          {/* Publisher */}
+          <div>
+            <label className="block text-sm font-medium text-purple-600 mb-2">
+              Publisher*
+            </label>
+            <input
+              type="text"
+              name="publisher"
+              value={bookData.publisher}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter publisher"
+            />
+            {errors.publisher && (
+              <p className="mt-1 text-red-500 text-sm">{errors.publisher}</p>
+            )}
+          </div>
+
+          {/* Genre */}
+          <div>
+            <label className="block text-sm font-medium text-purple-600 mb-2">
+              Genre*
+            </label>
+            <select
+              name="genre"
+              value={bookData.genre}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <option value="">Select a genre</option>
+              {genres.map((genre, index) => (
+                <option key={index} value={genre}>
+                  {genre}
+                </option>
+              ))}
+            </select>
+            {errors.genre && (
+              <p className="mt-1 text-red-500 text-sm">{errors.genre}</p>
+            )}
+          </div>
+
+          {/* Price */}
+          <div>
+            <label className="block text-sm font-medium text-purple-600 mb-2">
+              Price*
+            </label>
+            <input
+              type="number"
+              name="price"
+              value={bookData.price}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter price"
+            />
+            {errors.price && (
+              <p className="mt-1 text-red-500 text-sm">{errors.price}</p>
+            )}
+          </div>
+
+          {/* Quantity */}
+          <div>
+            <label className="block text-sm font-medium text-purple-600 mb-2">
+              Quantity*
+            </label>
+            <input
+              type="number"
+              name="quantity"
+              value={bookData.quantity}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter quantity"
+            />
+            {errors.quantity && (
+              <p className="mt-1 text-red-500 text-sm">{errors.quantity}</p>
+            )}
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-purple-600 mb-2">
+              Description*
+            </label>
+            <textarea
+              name="desc"
+              value={bookData.desc}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter description"
+            />
+            {errors.desc && (
+              <p className="mt-1 text-red-500 text-sm">{errors.desc}</p>
+            )}
+          </div>
+
+          {/* Author */}
+          <div>
+            <label className="block text-sm font-medium text-purple-600 mb-2">
+              Author*
+            </label>
+            <input
+              type="text"
+              name="author"
+              value={bookData.author}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter author"
+            />
+            {errors.author && (
+              <p className="mt-1 text-red-500 text-sm">{errors.author}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Update Book
+          </button>
+        </form>
       </div>
     </div>
   );

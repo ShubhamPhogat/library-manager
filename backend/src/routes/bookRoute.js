@@ -4,7 +4,7 @@ import { verifyAdmin } from "../middlewares/auth.verifyAdmin.js";
 import {
   addBook,
   deleteBook,
-  editBook,
+  EditBook,
   issueBook,
   settleOrder,
 } from "../controllers/bookController.js";
@@ -20,7 +20,12 @@ bookrouter.post(
   upload.single("image"),
   addBook
 );
-bookrouter.put("/edit", editBook);
+bookrouter.put(
+  "/edit/:id",
+
+  EditBook
+);
+
 bookrouter.delete("/delete/:bookId", deleteBook);
 bookrouter.post("/issue", issueBook);
 bookrouter.post("/return", settleOrder);

@@ -71,20 +71,16 @@ const BookList = () => {
     }
   };
 
-  const handleEdit = async (bookId) => {
+  const handleEdit = async (book) => {
     try {
-      await axios.put(
-        `${process.env.REACT_APP_BASE_BACKEND_URL}/book/edit`,
-        bookId
-      );
-      setBooks(books.filter((book) => book.id !== bookId));
+      navigate("/book/edit", { state: book });
     } catch (error) {
       console.error("Error deleting book:", error);
     }
   };
   let navigate = useNavigate();
   const handleAddnewBook = () => {
-    navigate("/book/add");
+    navigate("/book/addNewBook");
   };
 
   return (
@@ -177,7 +173,7 @@ const BookList = () => {
                 {/* Action buttons */}
                 <div className="flex gap-2 sm:flex-col">
                   <button
-                    onClick={handleEdit}
+                    onClick={() => handleEdit(book)}
                     className="p-2 border border-purple-500 text-purple-500 rounded-md hover:bg-purple-50 transition-colors"
                   >
                     <svg
