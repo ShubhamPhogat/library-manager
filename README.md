@@ -1,7 +1,8 @@
 ways to run the project
 
 
-1. project deployed on aws -http://51.21.2.116:3000/
+1. project deployed on aws -http://51.20.96.82
+:3000/
    note-mongodb is containerized in the ec2 instance so currently the mongodb does not hold any data , thats why currently enabling free access to login/signup
 
 run locally  
